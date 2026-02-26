@@ -1093,6 +1093,148 @@ function getLoyaltyLevel(totalOrders, totalSpent) {
   return "New";
 }
 
+// ========== ADVANCED ANALYTICS ENDPOINTS ==========
+
+// 1. Monthly Sales Comparison
+app.get("/api/owner/analytics/monthly-comparison", authenticateToken, requireRole('owner', 'admin'), readLimiter, async (req, res) => {
+  try {
+    const monthlySql = `
+      SELECT 
+        DATE_FORMAT(created_at, '%Y-%m') as month,
+        COUNT(id) as total_orders,
+        SUM(total_price) as total_revenue,
+        AVG(total_price) as avg_order_value
+      FROM orders
+      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+      GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+      ORDER BY month DESC
+    `;
+
+    const results = await dbHelpers.query(monthlySql);
+    
+    res.json({
+      success: true,
+      data: results.map(row => ({
+        month: row.month,
+        totalOrders: row.total_orders,
+        totalRevenue: parseFloat(row.total_revenue || 0),
+        avgOrderValue: parseFloat(row.avg_order_value || 0)
+      }))
+    });
+  } catch (error) {
+    console.error("Monthly comparison error:", error);
+    res.status(500).json({ success: false, message: "Error fetching monthly data" });
+  }
+});
+
+// 2. Peak Hours Analysis
+app.get("/api/owner/analytics/peak-hours", authenticateToken, requireRole('owner', 'admin'), readLimiter, async (req, res) => {
+  try {
+    const peakHoursSql = `
+      SELECT 
+        HOUR(created_at) as hour,
+        COUNT(id) as order_count,
+        SUM(total_price) as revenue
+      FROM orders
+      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+      GROUP BY HOUR(created_at)
+      ORDER BY hour
+    `;
+
+    const results = await dbHelpers.query(peakHoursSql);
+    
+    res.json({
+      success: true,
+      data: results.map(row => ({
+        hour: row.hour,
+        orderCount: row.order_count,
+        revenue: parseFloat(row.revenue || 0)
+      }))
+    });
+  } catch (error) {
+    console.error("Peak hours error:", error);
+    res.status(500).json({ success: false, message: "Error fetching peak hours data" });
+  }
+});
+
+// 3. Category Performance
+app.get("/api/owner/analytics/category-performance", authenticateToken, requireRole('owner', 'admin'), readLimiter, async (req, res) => {
+  try {
+    const categorySql = `
+      SELECT 
+        mi.category,
+        COUNT(DISTINCT oi.order_id) as order_count,
+        SUM(oi.quantity) as items_sold,
+        SUM(oi.discounted_total) as total_revenue
+      FROM order_items oi
+      JOIN menu_items mi ON oi.menu_item_id = mi.id
+      JOIN orders o ON oi.order_id = o.id
+      WHERE o.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+      GROUP BY mi.category
+      ORDER BY total_revenue DESC
+    `;
+
+    const results = await dbHelpers.query(categorySql);
+    
+    res.json({
+      success: true,
+      data: results.map(row => ({
+        category: row.category || 'Uncategorized',
+        orderCount: row.order_count,
+        itemsSold: row.items_sold,
+        totalRevenue: parseFloat(row.total_revenue || 0)
+      }))
+    });
+  } catch (error) {
+    console.error("Category performance error:", error);
+    res.status(500).json({ success: false, message: "Error fetching category data" });
+  }
+});
+
+// 4. Customer Retention Metrics
+app.get("/api/owner/analytics/customer-retention", authenticateToken, requireRole('owner', 'admin'), readLimiter, async (req, res) => {
+  try {
+    // Get new vs returning customers
+    const retentionSql = `
+      SELECT 
+        COUNT(DISTINCT CASE WHEN order_count = 1 THEN customer_id END) as new_customers,
+        COUNT(DISTINCT CASE WHEN order_count > 1 THEN customer_id END) as returning_customers,
+        COUNT(DISTINCT customer_id) as total_customers,
+        AVG(order_count) as avg_orders_per_customer
+      FROM (
+        SELECT customer_id, COUNT(id) as order_count
+        FROM orders
+        WHERE customer_id IS NOT NULL
+          AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        GROUP BY customer_id
+      ) as customer_orders
+    `;
+
+    const result = await dbHelpers.queryOne(retentionSql);
+    
+    const newCustomers = result.new_customers || 0;
+    const returningCustomers = result.returning_customers || 0;
+    const totalCustomers = result.total_customers || 0;
+    const retentionRate = totalCustomers > 0 
+      ? ((returningCustomers / totalCustomers) * 100).toFixed(1)
+      : 0;
+
+    res.json({
+      success: true,
+      data: {
+        newCustomers,
+        returningCustomers,
+        totalCustomers,
+        retentionRate: parseFloat(retentionRate),
+        avgOrdersPerCustomer: parseFloat(result.avg_orders_per_customer || 0).toFixed(1)
+      }
+    });
+  } catch (error) {
+    console.error("Customer retention error:", error);
+    res.status(500).json({ success: false, message: "Error fetching retention data" });
+  }
+});
+
 // ========== MENU ITEMS API ROUTES ==========
 
 // 1. GET all menu items

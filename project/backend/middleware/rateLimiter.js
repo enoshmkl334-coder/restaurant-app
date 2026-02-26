@@ -131,7 +131,7 @@ const uploadLimiter = rateLimit({
 // Lenient limiter for read-only operations
 const readLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 60, // Limit each IP to 60 requests per minute
+  max: 120, // Limit each IP to 120 requests per minute (increased for dashboard)
   message: {
     success: false,
     message: 'Too many requests. Please slow down.',

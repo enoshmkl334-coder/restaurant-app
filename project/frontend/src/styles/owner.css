@@ -237,6 +237,33 @@
   width: 100%;
 }
 
+.dashboard-header-actions {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dashboard-header-actions .refresh-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(102,126,234,0.3);
+  transition: all 0.2s;
+}
+
+.dashboard-header-actions .refresh-btn:hover {
+  box-shadow: 0 4px 8px rgba(102,126,234,0.4);
+  transform: translateY(-1px);
+}
+
 .dashboard-section {
   margin-bottom: 30px;
   background: rgba(255,255,255,0.9);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../config/api";
+import Analytics from "../components/owner/Analytics";
 import "../styles/owner.css";
 
 const Owner = () => {
@@ -48,16 +49,21 @@ const Owner = () => {
     try {
       setLoading(true);
 
+      const token = localStorage.getItem("token");
+      const headers = {
+        Authorization: `Bearer ${token}`
+      };
+
       const [
         revenueResponse,
         statsResponse,
         popularResponse,
         customersResponse,
       ] = await Promise.all([
-        fetch(`${API_BASE}/api/owner/revenue`),
-        fetch(`${API_BASE}/api/owner/today-stats`),
-        fetch(`${API_BASE}/api/owner/popular-items`),
-        fetch(`${API_BASE}/api/owner/customer-favorites`),
+        fetch(`${API_BASE}/api/owner/revenue`, { headers }),
+        fetch(`${API_BASE}/api/owner/today-stats`, { headers }),
+        fetch(`${API_BASE}/api/owner/popular-items`, { headers }),
+        fetch(`${API_BASE}/api/owner/customer-favorites`, { headers }),
       ]);
 
       const revenueData = await revenueResponse.json();
@@ -177,6 +183,11 @@ const Owner = () => {
           <div className="content-wrapper">
             {activeTab === "dashboard" && (
               <div className="owner-dashboard-content">
+                <div className="dashboard-header-actions">
+                  <button className="refresh-btn" onClick={fetchDashboardData}>
+                    🔄 Refresh Data
+                  </button>
+                </div>
                 {loading ? (
                   <div className="loading">Loading dashboard data...</div>
                 ) : (
@@ -330,14 +341,7 @@ const Owner = () => {
             )}
 
             {activeTab === "analytics" && (
-              <div className="coming-soon animate-scale-in">
-                <div className="coming-soon-icon">📈</div>
-                <h2>Advanced Analytics</h2>
-                <p>Detailed trends and insights coming soon...</p>
-                <div className="progress-bar">
-                  <div className="progress-fill"></div>
-                </div>
-              </div>
+              <Analytics />
             )}
 
             {activeTab === "reports" && (
