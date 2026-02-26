@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google OAuth Origin Test</title>
+</head>
+<body>
+    <h1>Google OAuth Origin Test</h1>
+    <p>Current URL: <strong id="currentUrl"></strong></p>
+    <p>Client ID: <strong>609391231411-fif5pn0afl82j81l4oncnd5p6ejolicr.apps.googleusercontent.com</strong></p>
+    
+    <h2>Instructions:</h2>
+    <ol>
+        <li>Open this file at: <code>http://localhost:3001/test-google-origin.html</code></li>
+        <li>Check the "Current URL" above</li>
+        <li>Go to Google Console: <a href="https://console.cloud.google.com/apis/credentials" target="_blank">https://console.cloud.google.com/apis/credentials</a></li>
+        <li>Click on your OAuth Client ID</li>
+        <li>Make sure "Authorized JavaScript origins" has the EXACT URL shown above</li>
+        <li>Click SAVE</li>
+        <li>Wait 5 minutes</li>
+        <li>Clear browser cache or use incognito</li>
+        <li>Try again</li>
+    </ol>
+
+    <h2>What to Add to Google Console:</h2>
+    <div style="background: #f0f0f0; padding: 15px; border-radius: 5px;">
+        <p><strong>Authorized JavaScript origins:</strong></p>
+        <code style="background: white; padding: 5px; display: block;">http://localhost:3001</code>
+        
+        <p style="margin-top: 15px;"><strong>Authorized redirect URIs:</strong></p>
+        <code style="background: white; padding: 5px; display: block;">http://localhost:3001</code>
+    </div>
+
+    <h2>Common Mistakes:</h2>
+    <ul>
+        <li>❌ Don't add: <code>http://localhost:3001/</code> (no trailing slash)</li>
+        <li>❌ Don't add: <code>https://localhost:3001</code> (use http not https)</li>
+        <li>❌ Don't add: <code>http://localhost:3001/login</code> (no path)</li>
+        <li>✅ Correct: <code>http://localhost:3001</code></li>
+    </ul>
+
+    <script>
+        document.getElementById('currentUrl').textContent = window.location.origin;
+    </script>
+</body>
+</html>

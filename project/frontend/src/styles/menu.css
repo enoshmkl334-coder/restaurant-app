@@ -1,0 +1,813 @@
+/* ==========================
+   VARIABLES
+========================== */
+:root {
+  --primary-color: #ff7f50;
+  --secondary-color: #ffd700;
+  --overlay-dark: rgba(0, 0, 0, 0.5);
+  --overlay-light: rgba(0, 0, 0, 0.4);
+  --font-serif: "Libre Baskerville", serif;
+  --font-sans: "Roboto", sans-serif;
+}
+
+/* ==========================
+   GLOBAL
+========================== */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-serif);
+  scroll-behavior: smooth;
+}
+
+/* ==========================
+   HEADER
+========================== */
+header {
+  background: url("/image/food background.png") no-repeat center/cover;
+  height: 200px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+header h1 {
+  font-weight: 400;
+  font-size: 2.5rem;
+}
+
+header p {
+  margin-top: 5px;
+}
+
+/* ==========================
+   NAVBAR
+========================== */
+.navbar {
+  transition: all 0.4s ease;
+  z-index: 10;
+}
+
+.navbar.scrolled {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(5px);
+  padding: 0.25rem 0 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .nav-link.btn {
+  font-weight: bold;
+  border-radius: 50px;
+  padding: 6px 18px;
+  transition: 0.3s;
+}
+
+.navbar .nav-link.btn:hover {
+  background-color: var(--primary-color);
+  color: #fff !important;
+}
+
+/* Dropdown hover for desktop */
+@media (min-width: 992px) {
+  .navbar .dropdown-menu {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease;
+    margin-top: 0;
+    z-index: 1000;
+  }
+
+  .navbar .dropdown:hover .dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .navbar .dropdown-toggle::after {
+    display: none;
+  }
+}
+
+/* ==========================
+   HOME SECTION
+========================== */
+.home-section {
+  height: 100vh;
+  background: url("/image/home.avif") no-repeat center/cover;
+  position: relative;
+  padding: 100px 1rem 0;
+}
+
+.home-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-dark);
+  z-index: 1;
+}
+
+.home-section .container,
+.home-card .card-img-overlay {
+  position: relative;
+  z-index: 2;
+}
+
+.home-section h1 {
+  font-size: 4rem;
+  color: #fff;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.home-card {
+  display: block;
+  position: relative;
+  text-decoration: none;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.home-card .card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.home-card .card-img-overlay {
+  background: var(--overlay-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.3s,
+    backdrop-filter 0.3s;
+}
+
+.home-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.home-card:hover .card-img {
+  transform: scale(1.1);
+}
+
+.home-card:hover .card-img-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.home-card .card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
+}
+
+.home-card:hover .card-title {
+  transform: scale(1.1);
+  color: var(--secondary-color);
+}
+
+/* ==========================
+   MENU SECTION
+========================== */
+.menu-section {
+  position: relative;
+  padding: 60px 0;
+  background: url("/image/menu background.jpeg") no-repeat center/cover;
+  color: #fff;
+}
+
+.menu-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-light);
+  z-index: 0;
+}
+
+.menu-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+.card.h-100 {
+  max-width: 350px;
+  margin: 0 auto;
+  /* Single consistent transition used by both base and hover states */
+  transition:
+    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.card.h-100:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card.h-100 .card-img-top {
+  transition: transform 0.3s ease;
+}
+
+.card.h-100:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.card.h-100 .card-title {
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
+}
+
+.card.h-100:hover .card-title {
+  transform: scale(1.05);
+  color: var(--primary-color);
+}
+
+/* ==========================
+   OPTION BOXES
+========================== */
+.options-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.option-box {
+  flex: 1 1 30%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 5px;
+  text-align: center;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.option-box:hover {
+  background-color: #f5f5f5;
+  transform: scale(1.03);
+}
+
+.option-box span:first-child {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+.option-box .price {
+  display: block;
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+  margin-top: 4px;
+}
+
+/* ==========================
+   MODALS
+========================== */
+.order-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  font-family: var(--font-sans);
+}
+
+.order-modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px 30px;
+  width: 320px;
+  max-width: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  position: relative;
+  transition: transform 0.3s ease;
+  animation: slideIn 0.4s ease;
+}
+
+.order-modal .close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 22px;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.3s ease;
+}
+
+.order-modal .close:hover {
+  color: #333;
+}
+
+.order-modal input[type="number"] {
+  width: 80%;
+  padding: 8px 12px;
+  margin: 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.order-modal button {
+  padding: 10px 25px;
+  border: none;
+  background-color: #4caf50;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.order-modal button:hover {
+  background-color: #45a049;
+}
+
+.order-message {
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  display: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  animation: fadeIn 0.3s;
+  text-align: center;
+}
+
+.order-message.success {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.order-message.error {
+  background-color: #f44336;
+  color: #fff;
+}
+
+/* ==========================
+   FOOTER
+========================== */
+footer {
+  position: relative;
+  background: url("/image/footer.avif") no-repeat center/cover;
+  color: #fff;
+  padding: 60px 20px 30px;
+  text-align: center;
+  font-family: var(--font-serif);
+  overflow: hidden;
+  min-height: 200px;
+}
+
+footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 0;
+}
+
+footer .footer-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+footer .footer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+  text-align: left;
+}
+
+footer .footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 16px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+
+footer h3 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+footer a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: var(--primary-color);
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+@media (max-width: 992px) {
+  header h1,
+  .home-section h1 {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  header h1,
+  .home-section h1 {
+    font-size: 2.5rem;
+  }
+
+  .home-section {
+    height: auto;
+    padding: 50px 1rem;
+  }
+
+  .home-card .card-img {
+    height: 140px;
+  }
+
+  footer .footer-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  header h1,
+  .home-section h1 {
+    font-size: 2rem;
+  }
+
+  .home-section {
+    padding: 30px 1rem;
+  }
+
+  .home-card .card-img {
+    height: 100px;
+  }
+
+  .home-card .card-title,
+  .home-section .lead {
+    font-size: 0.9rem;
+  }
+
+  .option-box {
+    flex: 1 1 45%;
+    margin-bottom: 5px;
+  }
+}
+
+/* ==========================
+   KEYFRAMES
+========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ==========================
+   ENHANCED ANIMATIONS FOR MENU PAGE
+========================== */
+
+/* Header animation intentionally disabled */
+
+/* 2. Card entrance animation */
+.card.h-100 {
+  animation: cardEntrance 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+/* Stagger the card animations */
+.card.h-100:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.card.h-100:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.card.h-100:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.card.h-100:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.card.h-100:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.card.h-100:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 3. Hover glow effect for cards */
+.card.h-100:hover {
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 107, 107, 0.1),
+    0 0 20px rgba(255, 107, 107, 0.2);
+  /* transition inherited from base rule — no override needed */
+}
+
+/* 4. Option boxes pulse animation */
+.option-box {
+  position: relative;
+  overflow: hidden;
+}
+
+.option-box:hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 107, 107, 0.1),
+    transparent
+  );
+  animation: shine 1.5s;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 5. Navbar smooth underline */
+.navbar .nav-link {
+  position: relative;
+}
+
+.navbar .nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary-color);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navbar .nav-link:hover::after {
+  width: 80%;
+}
+
+/* Home-card floating animation intentionally disabled */
+
+/* 7. Price tag bounce */
+.option-box .price {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.option-box:hover .price {
+  transform: scale(1.1);
+  color: var(--primary-color);
+}
+
+/* 8. Section title underline animation */
+.menu-section h2 {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 10px;
+}
+
+.menu-section h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--primary-color);
+  animation: underlineExpand 2s infinite alternate;
+}
+
+@keyframes underlineExpand {
+  0% {
+    width: 60px;
+  }
+  100% {
+    width: 120px;
+  }
+}
+
+/* 9. Image zoom on hover */
+.card.h-100 .card-img-top {
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card.h-100:hover .card-img-top {
+  transform: scale(1.08);
+}
+
+/* 10. Page load fade in */
+body {
+  animation: pageFadeIn 1s ease-out;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 11. Footer wave effect */
+footer::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    var(--secondary-color),
+    #00bfff,
+    var(--primary-color)
+  );
+  background-size: 400% 100%;
+  animation: waveLine 3s linear infinite;
+}
+
+@keyframes waveLine {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 400% 0%;
+  }
+}
+
+/* 12. Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 13. Modal entrance animation */
+.order-modal-content {
+  animation: modalPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes modalPop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.quantity-selector button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-display {
+  font-size: 24px;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Toast Notification */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #28a745;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  animation:
+    slideInRight 0.3s ease,
+    fadeOut 0.3s ease 2.7s;
+  max-width: 300px;
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-icon {
+  font-size: 20px;
+}
+
+.toast-message {
+  font-weight: 500;
+}
+
+/* Toast animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
