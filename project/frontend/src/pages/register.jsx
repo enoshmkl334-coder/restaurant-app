@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login-register.css";
+import { API_BASE, ENDPOINTS } from "../config/api";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -18,7 +19,7 @@ export default function Register() {
   useEffect(() => {
     async function fetchRestaurants() {
       try {
-        const res = await fetch("/api/restaurants");
+        const res = await fetch(`${API_BASE}${ENDPOINTS.RESTAURANTS}`);
         const data = await res.json();
         if (data && data.success !== false && Array.isArray(data.restaurants)) {
           setRestaurants(data.restaurants);
@@ -46,7 +47,7 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch(`${API_BASE}${ENDPOINTS.REGISTER}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

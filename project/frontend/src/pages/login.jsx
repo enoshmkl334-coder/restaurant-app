@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import "../styles/login-register.css";
 import { useUser } from "../contexts/UserContext";
 import { GoogleLogin } from "@react-oauth/google"; // added for google sign-in
+import { API_BASE, ENDPOINTS } from "../config/api";
 
 export default function Login() {
   const { login } = useUser();
@@ -29,7 +30,7 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch(`${API_BASE}${ENDPOINTS.LOGIN}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -90,7 +91,7 @@ export default function Login() {
     setIsLoading(true);
     setMessage("");
     try {
-      const res = await fetch("/api/auth/google", {
+      const res = await fetch(`${API_BASE}${ENDPOINTS.GOOGLE_AUTH}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),
