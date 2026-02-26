@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./UserManagement.css";
+import { API_BASE } from "../../config/api";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -43,7 +44,7 @@ export default function UserManagement() {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const response = await fetch("/api/admin/users", {
+      const response = await fetch(`${API_BASE}/api/admin/users`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -115,7 +116,7 @@ export default function UserManagement() {
   const handleRoleChange = async (userId, newRole) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("/api/admin/users/role", {
+      const response = await fetch(`${API_BASE}/api/admin/users/role`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -146,7 +147,7 @@ export default function UserManagement() {
     
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("/api/admin/users/status", {
+      const response = await fetch(`${API_BASE}/api/admin/users/status`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -191,7 +192,7 @@ export default function UserManagement() {
     
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("/api/admin/users/bulk-role", {
+      const response = await fetch(`${API_BASE}/api/admin/users/bulk-role`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
