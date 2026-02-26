@@ -811,3 +811,108 @@ html {
     opacity: 0;
   }
 }
+
+
+/* ==========================
+   IMPROVED MOBILE RESPONSIVE
+========================== */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    height: 150px !important;
+  }
+  
+  /* Menu cards - better mobile layout */
+  .card.h-100 {
+    max-width: 100% !important;
+    margin-bottom: 20px;
+  }
+  
+  .card.h-100 .card-img-top {
+    height: 200px !important;
+    object-fit: cover;
+  }
+  
+  /* Options - 2 columns on tablet */
+  .options-container {
+    gap: 8px;
+  }
+  
+  .option-box {
+    flex: 1 1 calc(50% - 8px) !important;
+    padding: 10px;
+    margin: 0 !important;
+  }
+  
+  /* Modal */
+  .order-modal-content {
+    width: 90% !important;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  header {
+    height: 120px !important;
+  }
+  
+  header h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Menu cards */
+  .card.h-100 .card-img-top {
+    height: 180px !important;
+  }
+  
+  .card.h-100 .card-title {
+    font-size: 1.1rem !important;
+  }
+  
+  .card.h-100 .card-text {
+    font-size: 0.9rem !important;
+  }
+  
+  /* Options - full width on small phones */
+  .option-box {
+    flex: 1 1 100% !important;
+    padding: 12px;
+  }
+  
+  /* Quantity selector */
+  .quantity-selector button {
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 18px !important;
+  }
+  
+  .quantity-display {
+    font-size: 20px !important;
+  }
+  
+  /* Toast notification */
+  .toast-notification {
+    top: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    max-width: none !important;
+    padding: 12px 15px !important;
+  }
+  
+  /* Navbar buttons */
+  .navbar .nav-link.btn {
+    padding: 8px 16px !important;
+    font-size: 0.9rem !important;
+    margin: 5px 0 !important;
+    display: block !important;
+    width: 100% !important;
+  }
+}
