@@ -612,6 +612,201 @@ app.put("/api/admin/users/bulk-role", authenticateToken, requireRole('admin'), a
   }
 });
 
+// ========== ADMIN ORDER MANAGEMENT ENDPOINTS ==========
+
+// Get all orders with customer info (admin only)
+app.get("/api/admin/orders", authenticateToken, requireRole('admin', 'owner'), readLimiter, async (req, res) => {
+  try {
+    const ordersSql = `
+      SELECT 
+        o.id,
+        o.created_at,
+        o.status,
+        o.total_price,
+        o.customer_id,
+        u.username as customer_name,
+        COUNT(oi.id) as item_count
+      FROM orders o
+      LEFT JOIN user u ON o.customer_id = u.customer_id
+      LEFT JOIN order_items oi ON o.id = oi.order_id
+      GROUP BY o.id, o.created_at, o.status, o.total_price, o.customer_id, u.username
+      ORDER BY o.created_at DESC
+      LIMIT 500
+    `;
+
+    const orders = await dbHelpers.query(ordersSql);
+    
+    res.json({
+      success: true,
+      orders: orders
+    });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching orders"
+    });
+  }
+});
+
+// Get order details with items (admin only)
+app.get("/api/admin/orders/:id/details", authenticateToken, requireRole('admin', 'owner'), readLimiter, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Get order info
+    const orderSql = `
+      SELECT 
+        o.*,
+        u.username as customer_name
+      FROM orders o
+      LEFT JOIN user u ON o.customer_id = u.customer_id
+      WHERE o.id = ?
+    `;
+    
+    const order = await dbHelpers.queryOne(orderSql, [id]);
+    
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      });
+    }
+
+    // Get order items
+    const itemsSql = `
+      SELECT 
+        oi.*,
+        mi.name,
+        mi.description
+      FROM order_items oi
+      JOIN menu_items mi ON oi.menu_item_id = mi.id
+      WHERE oi.order_id = ?
+    `;
+    
+    const items = await dbHelpers.query(itemsSql, [id]);
+    
+    res.json({
+      success: true,
+      order: {
+        ...order,
+        items: items.map(item => ({
+          ...item,
+          price: parseFloat(item.item_price),
+          quantity: item.quantity
+        }))
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching order details"
+    });
+  }
+});
+
+// Update order status (admin only)
+app.put("/api/admin/orders/:id/status", authenticateToken, requireRole('admin', 'owner'), apiLimiter, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    const validStatuses = ['new', 'preparing', 'ready', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status"
+      });
+    }
+
+    const updateSql = "UPDATE orders SET status = ? WHERE id = ?";
+    await dbHelpers.query(updateSql, [status, id]);
+
+    res.json({
+      success: true,
+      message: "Order status updated successfully"
+    });
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating order status"
+    });
+  }
+});
+
+// Sales Report API (admin only)
+app.get("/api/admin/reports/sales", authenticateToken, requireRole('admin', 'owner'), readLimiter, async (req, res) => {
+  try {
+    const { type, startDate, endDate } = req.query;
+
+    // Get orders in date range
+    const ordersSql = `
+      SELECT 
+        o.id,
+        o.created_at,
+        o.status,
+        o.total_price,
+        o.customer_id,
+        u.username as customer_name,
+        COUNT(oi.id) as item_count
+      FROM orders o
+      LEFT JOIN user u ON o.customer_id = u.customer_id
+      LEFT JOIN order_items oi ON o.id = oi.order_id
+      WHERE DATE(o.created_at) BETWEEN ? AND ?
+      GROUP BY o.id, o.created_at, o.status, o.total_price, o.customer_id, u.username
+      ORDER BY o.created_at DESC
+    `;
+
+    const orders = await dbHelpers.query(ordersSql, [startDate, endDate]);
+
+    // Calculate summary
+    const totalOrders = orders.length;
+    const totalRevenue = orders.reduce((sum, o) => sum + parseFloat(o.total_price || 0), 0);
+    const completedOrders = orders.filter(o => o.status === 'completed').length;
+    const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+    // Get top selling items
+    const topItemsSql = `
+      SELECT 
+        mi.name,
+        SUM(oi.quantity) as quantity,
+        SUM(oi.discounted_total) as revenue
+      FROM order_items oi
+      JOIN menu_items mi ON oi.menu_item_id = mi.id
+      JOIN orders o ON oi.order_id = o.id
+      WHERE DATE(o.created_at) BETWEEN ? AND ?
+      GROUP BY mi.id, mi.name
+      ORDER BY quantity DESC
+      LIMIT 10
+    `;
+
+    const topItems = await dbHelpers.query(topItemsSql, [startDate, endDate]);
+
+    res.json({
+      success: true,
+      report: {
+        summary: {
+          totalOrders,
+          totalRevenue,
+          avgOrder,
+          completedOrders
+        },
+        orders,
+        topItems
+      }
+    });
+  } catch (error) {
+    console.error("Error generating sales report:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error generating report"
+    });
+  }
+});
+
 // Simple endpoint to list restaurants for the frontend dropdown. Tries common table names and returns an empty list on failure.
 app.get("/api/restaurants", readLimiter, async (req, res) => {
   try {

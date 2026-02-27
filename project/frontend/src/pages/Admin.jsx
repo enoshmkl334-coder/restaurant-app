@@ -4,6 +4,8 @@ import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import MenuManagement from "../components/admin/MenuManagement";
 import UserManagement from "../components/admin/UserManagement";
+import OrderManagement from "../components/admin/OrderManagement";
+import SalesReports from "../components/admin/SalesReports";
 import "../styles/admin.css";
 
 const Admin = () => {
@@ -96,27 +98,9 @@ const Admin = () => {
         <div className="admin-main animate-fade-in-up">
           <div className="content-wrapper">
             {activeTab === "menu" && <MenuManagement />}
-            {activeTab === "orders" && (
-              <div className="coming-soon animate-scale-in">
-                <div className="coming-soon-icon">📦</div>
-                <h2>Orders Management</h2>
-                <p>This feature is coming soon...</p>
-                <div className="progress-bar">
-                  <div className="progress-fill"></div>
-                </div>
-              </div>
-            )}
+            {activeTab === "orders" && <OrderManagement />}
             {activeTab === "users" && <UserManagement />}
-            {activeTab === "reports" && (
-              <div className="coming-soon animate-scale-in">
-                <div className="coming-soon-icon">📊</div>
-                <h2>Sales Reports</h2>
-                <p>This feature is coming soon...</p>
-                <div className="progress-bar">
-                  <div className="progress-fill"></div>
-                </div>
-              </div>
-            )}
+            {activeTab === "reports" && <SalesReports />}
           </div>
         </div>
       </div>
