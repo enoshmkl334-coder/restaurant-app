@@ -144,6 +144,18 @@ const readLimiter = rateLimit({
   },
 });
 
+// Very lenient limiter for kitchen real-time updates
+const kitchenLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 300, // Allow 300 requests per minute for real-time kitchen updates
+  message: {
+    success: false,
+    message: 'Too many requests. Please slow down.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Create a custom limiter with specific options
 const createCustomLimiter = (windowMs, max, message) => {
   return rateLimit({
@@ -181,6 +193,7 @@ module.exports = {
   menuModifyLimiter,
   uploadLimiter,
   readLimiter,
+  kitchenLimiter,
   createCustomLimiter,
   configureTrustProxy,
 };

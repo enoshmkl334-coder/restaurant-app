@@ -35,6 +35,7 @@ const {
   menuModifyLimiter,
   uploadLimiter,
   readLimiter,
+  kitchenLimiter,
   configureTrustProxy
 } = require("./middleware/rateLimiter");
 
@@ -803,6 +804,117 @@ app.get("/api/admin/reports/sales", authenticateToken, requireRole('admin', 'own
     res.status(500).json({
       success: false,
       message: "Error generating report"
+    });
+  }
+});
+
+// ========================================
+// KITCHEN ROUTES
+// ========================================
+
+// Get active orders for kitchen (kitchen staff, admin, owner)
+app.get("/api/kitchen/orders", authenticateToken, requireRole('kitchen', 'admin', 'owner'), kitchenLimiter, async (req, res) => {
+  try {
+    const ordersSql = `
+      SELECT 
+        o.id,
+        o.customer_id,
+        o.total_price,
+        o.status,
+        o.created_at,
+        u.username as customer_name,
+        GROUP_CONCAT(
+          CONCAT(oi.quantity, 'x ', mi.name) 
+          SEPARATOR ', '
+        ) as items_text
+      FROM orders o
+      LEFT JOIN user u ON o.customer_id = u.customer_id
+      LEFT JOIN order_items oi ON o.id = oi.order_id
+      LEFT JOIN menu_items mi ON oi.menu_item_id = mi.id
+      WHERE mi.restaurant_id = ?
+      GROUP BY o.id, o.customer_id, o.total_price, o.status, o.created_at, u.username
+      ORDER BY 
+        CASE o.status
+          WHEN 'new' THEN 1
+          WHEN 'pending' THEN 1
+          WHEN 'preparing' THEN 2
+          WHEN 'ready' THEN 3
+          ELSE 4
+        END,
+        o.created_at ASC
+    `;
+
+    const orders = await dbHelpers.query(ordersSql, [req.user.restaurantId]);
+
+    // Format orders for frontend
+    const formattedOrders = orders.map(order => ({
+      id: order.id,
+      customer_id: order.customer_id,
+      customer_name: order.customer_name || 'Guest',
+      total_amount: order.total_price,
+      status: order.status,
+      created_at: order.created_at,
+      items: order.items_text || 'No items'
+    }));
+
+    res.json({
+      success: true,
+      orders: formattedOrders || []
+    });
+  } catch (error) {
+    console.error("Error fetching kitchen orders:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching orders"
+    });
+  }
+});
+
+// Update order status (kitchen staff, admin, owner)
+app.put("/api/kitchen/orders/:id/status", authenticateToken, requireRole('kitchen', 'admin', 'owner'), apiLimiter, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    const validStatuses = ['new', 'pending', 'preparing', 'ready', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status"
+      });
+    }
+
+    // Verify order exists and belongs to user's restaurant
+    const orderCheck = await dbHelpers.queryOne(
+      `SELECT o.id 
+       FROM orders o
+       LEFT JOIN order_items oi ON o.id = oi.order_id
+       LEFT JOIN menu_items mi ON oi.menu_item_id = mi.id
+       WHERE o.id = ? AND mi.restaurant_id = ?
+       LIMIT 1`,
+      [id, req.user.restaurantId]
+    );
+
+    if (!orderCheck) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found or access denied"
+      });
+    }
+
+    const updateSql = "UPDATE orders SET status = ? WHERE id = ?";
+    await dbHelpers.query(updateSql, [status, id]);
+
+    res.json({
+      success: true,
+      message: "Order status updated successfully"
+    });
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating order status"
     });
   }
 });

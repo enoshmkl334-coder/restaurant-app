@@ -5,6 +5,7 @@ import Register from "./pages/register.jsx";
 import SelectRestaurant from "./pages/SelectRestaurant.jsx";
 import Menu from "./pages/menu.jsx";
 import Owner from "./pages/owner.jsx";
+import Kitchen from "./pages/Kitchen.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Admin from "./pages/Admin.jsx";
@@ -97,6 +98,18 @@ function App() {
               <RouteErrorBoundary routeName="Admin Panel">
                 <ProtectedRoute allowedRoles={["admin", "owner"]}>
                   <Admin />
+                </ProtectedRoute>
+              </RouteErrorBoundary>
+            }
+          />
+          
+          {/* Kitchen Page - Kitchen staff, admin, owner */}
+          <Route
+            path="/kitchen"
+            element={
+              <RouteErrorBoundary routeName="Kitchen">
+                <ProtectedRoute allowedRoles={["kitchen", "admin", "owner"]}>
+                  <Kitchen />
                 </ProtectedRoute>
               </RouteErrorBoundary>
             }

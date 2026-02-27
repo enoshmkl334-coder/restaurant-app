@@ -71,6 +71,8 @@ export default function Login() {
             navigate("/admin"); // redirect admins to admin page
           } else if (role === "owner") {
             navigate("/owner");
+          } else if (role === "kitchen") {
+            navigate("/kitchen"); // redirect kitchen staff to kitchen page
           } else {
             navigate("/"); // guest or other roles
           }
@@ -124,6 +126,8 @@ export default function Login() {
             navigate("/admin");
           } else if (role === "owner") {
             navigate("/owner");
+          } else if (role === "kitchen") {
+            navigate("/kitchen"); // redirect kitchen staff to kitchen page
           } else {
             navigate("/");
           }
