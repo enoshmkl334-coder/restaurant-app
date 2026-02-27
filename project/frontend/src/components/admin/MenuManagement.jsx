@@ -104,6 +104,13 @@ const MenuManagement = () => {
     const serverLimitBytes = 4 * 1024 * 1024; // server binary limit
     const clientTarget = 3 * 1024 * 1024; // aim lower than server limit
 
+    // Get auth token
+    const token = localStorage.getItem("token");
+    const authHeaders = {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+
     // Estimate current size (approx)
     const approxBytes = Math.ceil(
       ((dataUrl.length - dataUrl.indexOf(",") - 1) * 3) / 4,
@@ -138,7 +145,7 @@ const MenuManagement = () => {
 
     const res = await fetch("http://localhost/api/upload-image", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders,
       body: JSON.stringify({ imageBase64: payload }),
     });
 
@@ -159,7 +166,7 @@ const MenuManagement = () => {
           });
           const retry = await fetch("http://localhost/api/upload-image", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders,
             body: JSON.stringify({ imageBase64: aggressive }),
           });
 
@@ -202,7 +209,7 @@ const MenuManagement = () => {
         appetizers: "appetizer",
         mains: "main",
         desserts: "dessert",
-        beverages: "drinks",
+        beverages: "beverage",
       };
 
       // Use FIRST variety's price as the main price
@@ -249,7 +256,16 @@ const MenuManagement = () => {
       alert("✅ Item added successfully!");
     } catch (error) {
       console.error("❌ Error adding item:", error);
-      alert("❌ Failed to add item: " + error.message);
+      
+      // Show more helpful error message
+      let errorMessage = "Failed to add item";
+      if (error.message.includes("Validation failed")) {
+        errorMessage = "Please check your input:\n- Name must be 2-100 characters\n- Description must be at least 5 characters\n- All variety prices must be valid numbers";
+      } else {
+        errorMessage = error.message;
+      }
+      
+      alert("❌ " + errorMessage);
     }
   };
 
@@ -262,7 +278,7 @@ const MenuManagement = () => {
         appetizers: "appetizer",
         mains: "main",
         desserts: "dessert",
-        beverages: "drinks",
+        beverages: "beverage",
       };
 
       // If image is Base64, upload first
@@ -303,7 +319,16 @@ const MenuManagement = () => {
       alert("✅ Item updated successfully!");
     } catch (error) {
       console.error("❌ Error updating item:", error);
-      alert("❌ Failed to update item: " + error.message);
+      
+      // Show more helpful error message
+      let errorMessage = "Failed to update item";
+      if (error.message.includes("Validation failed")) {
+        errorMessage = "Please check your input:\n- Name must be 2-100 characters\n- Description must be at least 5 characters\n- All variety prices must be valid numbers";
+      } else {
+        errorMessage = error.message;
+      }
+      
+      alert("❌ " + errorMessage);
     }
   };
 

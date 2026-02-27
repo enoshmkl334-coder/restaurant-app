@@ -4,6 +4,8 @@ const { body, param, query, validationResult } = require('express-validator');
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.error('❌ Validation failed:', JSON.stringify(errors.array(), null, 2));
+    console.error('📦 Request body:', JSON.stringify(req.body, null, 2));
     return res.status(400).json({
       success: false,
       message: 'Validation failed',
@@ -76,7 +78,7 @@ const validateMenuItemCreate = [
     .trim()
     .notEmpty().withMessage('Menu item name is required')
     .isLength({ min: 2, max: 100 }).withMessage('Name must be 2-100 characters')
-    .matches(/^[a-zA-Z0-9\s\-()&',]+$/).withMessage('Name contains invalid characters'),
+    .matches(/^[a-zA-Z0-9\s\-()&',:]+$/).withMessage('Name contains invalid characters'),
   
   body('description')
     .trim()
@@ -107,7 +109,7 @@ const validateMenuItemCreate = [
     .optional()
     .trim()
     .isLength({ max: 500 }).withMessage('Image URL too long')
-    .matches(/^(https?:\/\/|\/uploads\/)/).withMessage('Invalid image URL format'),
+    .matches(/^(https?:\/\/|\/uploads\/|\/image\/)/).withMessage('Invalid image URL format'),
   
   body('options')
     .optional()

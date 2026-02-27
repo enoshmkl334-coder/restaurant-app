@@ -30,6 +30,7 @@ export const menuApi = {
   },
 
   async create(itemData) {
+    console.log('🔍 Creating menu item with data:', itemData);
     const response = await fetch(`${API_BASE}/api/menu-items`, {
       method: "POST",
       headers: getAuthHeaders(),
@@ -37,12 +38,18 @@ export const menuApi = {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      console.error('❌ Create failed:', response.status, errorData);
+      if (errorData.errors) {
+        console.error('❌ Validation errors:', errorData.errors);
+      }
+      throw new Error(`HTTP error! status: ${response.status}${errorData.message ? ' - ' + errorData.message : ''}`);
     }
     return await response.json();
   },
 
   async update(id, itemData) {
+    console.log('🔍 Updating menu item:', id, 'with data:', itemData);
     const response = await fetch(`${API_BASE}/api/menu-items/${id}`, {
       method: "PUT",
       headers: getAuthHeaders(),
@@ -50,7 +57,12 @@ export const menuApi = {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      console.error('❌ Update failed:', response.status, errorData);
+      if (errorData.errors) {
+        console.error('❌ Validation errors:', errorData.errors);
+      }
+      throw new Error(`HTTP error! status: ${response.status}${errorData.message ? ' - ' + errorData.message : ''}`);
     }
     return await response.json();
   },

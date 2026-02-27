@@ -34,7 +34,7 @@ const MenuItemForm = ({ item, onSave, onCancel }) => {
     { value: "appetizer", label: "Appetizers" },
     { value: "main", label: "Main Course" },
     { value: "dessert", label: "Desserts" },
-    { value: "drinks", label: "Beverages" },
+    { value: "beverage", label: "Beverages" },
   ];
 
   const handleChange = (e) => {
