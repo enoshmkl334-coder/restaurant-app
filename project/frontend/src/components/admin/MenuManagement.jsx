@@ -1,6 +1,7 @@
 // src/components/admin/MenuManagement.jsx
 import React, { useState, useEffect } from "react";
 import { menuApi } from "../../services/menuApi";
+import { API_BASE } from "../../config/api";
 import MenuItemForm from "./MenuItemForm";
 import MenuItemList from "./MenuItemList";
 import { useUser } from "../../contexts/UserContext";
@@ -143,7 +144,7 @@ const MenuManagement = () => {
       }
     }
 
-    const res = await fetch("http://localhost/api/upload-image", {
+    const res = await fetch(`${API_BASE}/api/upload-image`, {
       method: "POST",
       headers: authHeaders,
       body: JSON.stringify({ imageBase64: payload }),
@@ -164,7 +165,7 @@ const MenuManagement = () => {
             stepQuality: 0.05,
             stepDim: 0.75,
           });
-          const retry = await fetch("http://localhost/api/upload-image", {
+          const retry = await fetch(`${API_BASE}/api/upload-image`, {
             method: "POST",
             headers: authHeaders,
             body: JSON.stringify({ imageBase64: aggressive }),
