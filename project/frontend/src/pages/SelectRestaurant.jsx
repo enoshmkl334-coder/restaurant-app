@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
+import { API_BASE, ENDPOINTS } from "../config/api";
 import "../styles/login-register.css";
 
 export default function SelectRestaurant() {
@@ -21,7 +22,7 @@ export default function SelectRestaurant() {
     // Fetch available restaurants
     async function fetchRestaurants() {
       try {
-        const res = await fetch("/api/restaurants");
+        const res = await fetch(`${API_BASE}${ENDPOINTS.RESTAURANTS}`);
         const data = await res.json();
         if (data && data.success !== false && Array.isArray(data.restaurants)) {
           setRestaurants(data.restaurants);
@@ -49,7 +50,7 @@ export default function SelectRestaurant() {
     setMessage("");
 
     try {
-      const response = await fetch("/api/user/select-restaurant", {
+      const response = await fetch(`${API_BASE}/api/user/select-restaurant`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

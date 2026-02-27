@@ -1,6 +1,7 @@
 import React from "react";
 import { useCart } from "../contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE, ENDPOINTS } from "../config/api";
 import "./../styles/cart.css"; // We'll create this
 
 const CartPage = () => {
@@ -55,7 +56,7 @@ const CartPage = () => {
         return;
       }
 
-      const response = await fetch("/api/orders", {
+      const response = await fetch(`${API_BASE}${ENDPOINTS.ORDERS}`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
